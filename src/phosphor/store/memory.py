@@ -10,7 +10,6 @@ from __future__ import annotations
 import threading
 
 from ..core.mathx import cosine, l2_normalize
-from .protocol import VectorStore
 
 
 class MemoryStore:
@@ -32,7 +31,7 @@ class MemoryStore:
             raise ValueError("ids/vectors length mismatch")
         metas = metas or [{} for _ in ids]
         with self._lock:
-            for cid, vec, meta in zip(ids, vectors, metas):
+            for cid, vec, meta in zip(ids, vectors, metas, strict=False):
                 if self.dim == 0:
                     self.dim = len(vec)
                 if len(vec) != self.dim:

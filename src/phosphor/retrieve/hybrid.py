@@ -10,8 +10,8 @@ from __future__ import annotations
 import time
 
 from ..core.config import RetrieveConfig
-from ..core.types import Chunk, Scored
 from ..core.events import bus
+from ..core.types import Chunk, Scored
 from .dense import DenseRetriever
 from .protocol import Reranker, Retriever
 from .sparse import SparseRetriever

@@ -8,8 +8,9 @@ keeps working, which is invisible until the HTTP layer is exercised.
 from __future__ import annotations
 
 import time
+from collections.abc import Iterator
 from dataclasses import asdict
-from typing import Any, Iterator
+from typing import Any
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -173,7 +174,7 @@ def create_app(config: Config | None = None, pipeline: Pipeline | None = None) -
                     trace_id=result.trace_id,
                     strategy="orchestrated",
                 )
-            answer = pipe.ask(req.query, top_k=req.top_k)
+            answer = pipe.ask(req.query, top_k=req.top_k, history=history or None)
         except PhosphorError as exc:
             detail = exc.as_dict()
             raise HTTPException(status_code=400, detail=detail) from exc
@@ -202,7 +203,7 @@ def create_app(config: Config | None = None, pipeline: Pipeline | None = None) -
 
         def gen() -> Iterator[bytes]:
             for piece in pipe.stream(req.query, top_k=req.top_k):
-                yield f"data: {piece}\n\n".encode("utf-8")
+                yield f"data: {piece}\n\n".encode()
             yield b"data: [DONE]\n\n"
 
         return StreamingResponse(gen(), media_type="text/event-stream")

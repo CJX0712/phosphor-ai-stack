@@ -110,7 +110,7 @@ class CrossEncoderReranker:
         model = self._ensure()
         scores = list(model.rerank(query, [s.chunk.text for s in scored]))
         out: list[Scored] = []
-        for item, value in zip(scored, scores):
+        for item, value in zip(scored, scores, strict=False):
             detail = dict(item.detail)
             detail["rerank"] = float(value)
             out.append(Scored(chunk=item.chunk, score=float(value), source=item.source, detail=detail))

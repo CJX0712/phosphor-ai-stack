@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Any
 
 from ..core.types import Message
-from .protocol import Memory
 
 
 class InProcMemory:

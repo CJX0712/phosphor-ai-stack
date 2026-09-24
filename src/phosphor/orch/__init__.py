@@ -2,7 +2,7 @@
 
 from ..core.config import OrchestrationConfig
 from .graph import HeuristicPlanner, LexicalCritic
-from .protocol import Critic, Critique, Planner, Plan, SubTask, TaskResult
+from .protocol import Critic, Critique, Plan, Planner, SubTask, TaskResult
 from .runner import OrchestratedResult, Orchestrator
 
 __all__ = [

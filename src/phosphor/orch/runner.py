@@ -9,12 +9,12 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 
+from ..agent.react import ReActAgent
 from ..core.config import OrchestrationConfig
 from ..core.errors import OrchestrationError
 from ..core.events import bus
 from ..core.ids import random_id
 from ..core.types import AgentAnswer
-from ..agent.react import ReActAgent
 from .graph import HeuristicPlanner, LexicalCritic
 from .protocol import (
     Critic,

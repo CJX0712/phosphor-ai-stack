@@ -30,7 +30,7 @@ def cosine(a: list[float], b: list[float]) -> float:
     dot = 0.0
     na = 0.0
     nb = 0.0
-    for x, y in zip(a, b):
+    for x, y in zip(a, b, strict=False):
         dot += x * y
         na += x * x
         nb += y * y
@@ -74,7 +74,7 @@ def spearman(xs: list[float], ys: list[float]) -> float:
     rx = _ranks(xs)
     ry = _ranks(ys)
     n = len(xs)
-    d2 = sum((a - b) ** 2 for a, b in zip(rx, ry))
+    d2 = sum((a - b) ** 2 for a, b in zip(rx, ry, strict=False))
     return 1.0 - (6.0 * d2) / (n * (n * n - 1))
 
 

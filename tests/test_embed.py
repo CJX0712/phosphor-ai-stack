@@ -1,6 +1,6 @@
+from phosphor.core.config import EmbedConfig
 from phosphor.core.mathx import cosine
 from phosphor.embed import HashingEmbedder, build_embedder
-from phosphor.core.config import EmbedConfig
 
 
 def test_hashing_dimension_and_normalisation():

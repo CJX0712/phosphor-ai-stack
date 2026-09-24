@@ -97,9 +97,10 @@ def stage_pytest() -> Stage:
         encoding="utf-8",
         errors="replace",
     )
-    lines = [l for l in proc.stdout.splitlines() if l.strip()]
+    lines = [line for line in proc.stdout.splitlines() if line.strip()]
     summary = next(
-        (l for l in reversed(lines) if "passed" in l or "failed" in l or "error" in l),
+        (line for line in reversed(lines)
+         if "passed" in line or "failed" in line or "error" in line),
         "",
     )
     stage.detail["summary"] = summary.strip()
@@ -119,7 +120,7 @@ def stage_http_e2e() -> Stage:
         encoding="utf-8",
         errors="replace",
     )
-    tail = [l for l in proc.stdout.splitlines() if l.strip()]
+    tail = [line for line in proc.stdout.splitlines() if line.strip()]
     stage.detail["summary"] = tail[-1].strip() if tail else ""
     stage.detail["exit"] = proc.returncode
     if proc.returncode != 0:

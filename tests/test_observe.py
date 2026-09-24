@@ -34,7 +34,6 @@ def test_tracer_collects_spans_by_trace():
     original = bus()
     try:
         # Re-point the shared tracer at a private bus for isolation.
-        import phosphor.observe.tracing as tracing
 
         tracer._traces.clear()
         events.subscribe_all(tracer._on_event)

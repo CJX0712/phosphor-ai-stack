@@ -8,7 +8,6 @@ from phosphor.tools import (
     route_deterministic,
     safe_eval,
 )
-from phosphor.tools.builtin import make_kb_search
 
 
 def registry() -> ToolRegistry:

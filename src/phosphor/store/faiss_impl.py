@@ -12,7 +12,6 @@ from typing import Any
 
 from ..core.errors import StorageError
 from ..core.mathx import l2_normalize
-from .protocol import VectorStore
 
 
 class FaissStore:
@@ -45,11 +44,11 @@ class FaissStore:
             known = set(self._ids)
             new_pairs = [
                 (cid, vec, meta)
-                for cid, vec, meta in zip(ids, matrix, metas)
+                for cid, vec, meta in zip(ids, matrix, metas, strict=False)
                 if cid not in known
             ]
             if not new_pairs:
-                for cid, meta in zip(ids, metas):
+                for cid, meta in zip(ids, metas, strict=False):
                     self._meta[cid] = dict(meta)
                 return
             import numpy as np  # type: ignore
@@ -68,7 +67,7 @@ class FaissStore:
         vec = np.asarray([l2_normalize(list(query))], dtype="float32")
         scores, idxs = self._index.search(vec, min(max(1, k), len(self._ids)))
         out: list[tuple[str, float]] = []
-        for score, i in zip(scores[0], idxs[0]):
+        for score, i in zip(scores[0], idxs[0], strict=False):
             if i < 0 or i >= len(self._ids):
                 continue
             out.append((self._ids[int(i)], float(score)))

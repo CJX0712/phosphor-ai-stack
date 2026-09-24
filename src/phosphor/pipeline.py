@@ -8,14 +8,14 @@ reconfigurable by environment without touching business logic.
 from __future__ import annotations
 
 import time
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 from .agent.react import ReActAgent
 from .chunk import split_document
 from .core.config import Config
-from .core.errors import IngestError
 from .core.events import bus
 from .core.ids import random_id
 from .core.types import (
@@ -24,6 +24,7 @@ from .core.types import (
     Document,
     EvalReport,
     IngestReport,
+    Message,
     Scored,
 )
 from .embed import build_embedder
@@ -34,7 +35,7 @@ from .llm import build_llm
 from .memory import build_memory
 from .observe import metrics
 from .orch import OrchestratedResult, Orchestrator
-from .retrieve import HybridRetriever, build_retriever, build_reranker
+from .retrieve import HybridRetriever, build_reranker, build_retriever
 from .store import build_store
 from .tools import ToolRegistry, register_builtins, route_deterministic
 
@@ -98,14 +99,18 @@ class Pipeline:
         return hits
 
     # -- reasoning --------------------------------------------------------
-    def ask(self, query: str, top_k: int | None = None, trace_id: str = "") -> AgentAnswer:
+    def ask(
+        self,
+        query: str,
+        top_k: int | None = None,
+        trace_id: str = "",
+        history: list[Message] | None = None,
+    ) -> AgentAnswer:
         trace_id = trace_id or random_id("tr_")
         with metrics().timer("agent.latency"):
-            answer = self.agent.run(query, top_k=top_k, trace_id=trace_id)
+            answer = self.agent.run(query, top_k=top_k, trace_id=trace_id, history=history)
         metrics().inc("agent.queries")
         if self.memory is not None:
-            from .core.types import Message
-
             self.memory.append(trace_id, Message(role="user", content=query))
             self.memory.append(trace_id, Message(role="assistant", content=answer.answer))
         return answer
@@ -122,8 +127,7 @@ class Pipeline:
 
         evidence = "\n".join(s.chunk.render() for s in hits)
         messages = build_messages(query, evidence)
-        for piece in self.llm.stream(messages):
-            yield piece
+        yield from self.llm.stream(messages)
 
     # -- introspection ----------------------------------------------------
     def evaluate(self, k: int = 6) -> EvalReport:

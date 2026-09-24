@@ -6,7 +6,8 @@ the API layer can be tested against a deterministic backend.
 
 from __future__ import annotations
 
-from typing import Iterator, Protocol, runtime_checkable
+from collections.abc import Iterator
+from typing import Protocol, runtime_checkable
 
 from ..core.types import Message
 

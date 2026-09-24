@@ -6,10 +6,9 @@ error instead of crashing the ingest pipeline when pypdf is absent.
 
 from __future__ import annotations
 
-import io as _io
 import re
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 from ..core.errors import IngestError
 from ..core.ids import stable_id

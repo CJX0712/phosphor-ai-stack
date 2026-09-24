@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
-from typing import Any, Callable
+from typing import Any
 
 from ..core.errors import ToolError
 from .arith import detect_arithmetic, format_number, safe_eval
@@ -38,7 +39,7 @@ def _convert(args: dict[str, Any]) -> str:
     value = float(args.get("value", 0))
     src = str(args.get("from", "")).lower()
     dst = str(args.get("to", "")).lower()
-    for family, table in _UNITS.items():
+    for table in _UNITS.values():
         if src in table and dst in table:
             result = value * table[src] / table[dst]
             return f"{value:g} {src} = {format_number(result)} {dst}"

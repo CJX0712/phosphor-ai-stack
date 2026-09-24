@@ -12,7 +12,7 @@ import re
 
 from ..core.ids import stable_id
 from ..core.text import cosine_sets, strip_citations, word_set
-from .protocol import Critic, Critique, Plan, Planner, SubTask, TaskResult
+from .protocol import Critique, Plan, SubTask, TaskResult
 
 _SPLIT_RE = re.compile(r"(?:以及|并且|同时|另外|还有|然后|和|与|，|；|;|,| and | then | also )", re.I)
 _COMPOUND_HINT = re.compile(r"(?:以及|并且|同时|另外|还有|和|与|，|；|;|,)", re.I)

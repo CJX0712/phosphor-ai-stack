@@ -19,7 +19,7 @@ from ..core.config import AgentConfig
 from ..core.errors import ToolError
 from ..core.events import bus
 from ..core.ids import random_id
-from ..core.text import strip_citations, word_set, cosine_sets
+from ..core.text import cosine_sets, strip_citations, word_set
 from ..core.types import AgentAnswer, AgentStep, Message, Scored, ToolResult
 from ..llm.protocol import LLM
 from ..retrieve.protocol import Retriever
@@ -59,7 +59,7 @@ def parse_final(text: str) -> str:
     match = _FINAL_RE.search(text)
     if match:
         return match.group(1).strip()
-    for line in reversed([l.strip() for l in text.splitlines()]):
+    for line in reversed([raw.strip() for raw in text.splitlines()]):
         if not line:
             continue
         if line.lower().startswith(_PROTOCOL_PREFIX):
@@ -89,7 +89,13 @@ class ReActAgent:
         self._router = deterministic_router
 
     # -- public -----------------------------------------------------------
-    def run(self, query: str, top_k: int | None = None, trace_id: str = "") -> AgentAnswer:
+    def run(
+        self,
+        query: str,
+        top_k: int | None = None,
+        trace_id: str = "",
+        history: list[Message] | None = None,
+    ) -> AgentAnswer:
         started = time.perf_counter()
         trace_id = trace_id or random_id("tr_")
         steps: list[AgentStep] = []
@@ -120,7 +126,7 @@ class ReActAgent:
             evidence_text = (
                 "\n".join(s.chunk.render() for s in evidence) if evidence else ""
             )
-            messages = build_messages(query, evidence_text, observations)
+            messages = build_messages(query, evidence_text, observations, history)
             raw = self.llm.complete(messages)
             action = parse_action(raw)
             thought = parse_thought(raw)

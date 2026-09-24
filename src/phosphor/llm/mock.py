@@ -14,11 +14,11 @@ It is not a language model and is labelled as such in every response metadata.
 from __future__ import annotations
 
 import re
-from typing import Iterator
+from collections.abc import Iterator
 
 from ..core.text import cosine_sets, split_sentences, strip_citations, tokenize, word_set
-from ..lexical.expand import expand_query
 from ..core.types import Message
+from ..lexical.expand import expand_query
 from .protocol import LLM
 
 _CONTEXT_START = "<kb-context>"

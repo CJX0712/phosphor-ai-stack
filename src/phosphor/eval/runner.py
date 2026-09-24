@@ -8,11 +8,12 @@ recall drop for reasons that have nothing to do with retrieval quality.
 from __future__ import annotations
 
 import time
-from typing import Callable, Protocol
+from collections.abc import Callable
+from typing import Protocol
 
+from ..core.events import bus
 from ..core.mathx import percentile
 from ..core.types import CaseResult, EvalCase, EvalReport
-from ..core.events import bus
 from .golden import corpus_documents, golden_cases
 from .metrics import block_recall, doc_hit, doc_mrr, grounding
 
@@ -129,7 +130,7 @@ def run_evaluation(
         "pass_rate": report.pass_rate,
     }
     report.violations = [
-        f"{name}: {value} < threshold {limit}"
+        f"{name}: {actual[name]} < threshold {limit}"
         for name, limit in thresholds.items()
         if actual.get(name, 0.0) < limit
     ]

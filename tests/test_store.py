@@ -2,9 +2,9 @@ import importlib.util
 
 import pytest
 
+from phosphor.core.config import StoreConfig
 from phosphor.core.mathx import l2_normalize
 from phosphor.store import MemoryStore, build_store
-from phosphor.core.config import StoreConfig
 
 
 def test_memory_search_is_exact_cosine():

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phosphor AI Stack 控制台</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --border: #e3e6ea;
+    --text: #1c1f23;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --accent-soft: #eaf1fe;
+    --ok: #15803d;
+    --warn: #b45309;
+    --err: #b91c1c;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 14px; line-height: 1.6;
+  }
+  header {
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 14px 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  header h1 { font-size: 17px; margin: 0; font-weight: 650; letter-spacing: .2px; }
+  header .sub { color: var(--muted); font-size: 12px; }
+  .grow { flex: 1; }
+  input, textarea, select, button {
+    font-family: inherit; font-size: 13px; color: var(--text);
+  }
+  input[type=text], textarea, select {
+    width: 100%; padding: 7px 10px; border: 1px solid var(--border);
+    border-radius: 7px; background: #fff; outline: none;
+  }
+  input[type=text]:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 90px; font-family: var(--mono); font-size: 12.5px; }
+  button {
+    padding: 7px 14px; border-radius: 7px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff; cursor: pointer; font-weight: 550;
+  }
+  button.secondary { background: #fff; color: var(--accent); }
+  button.ghost { background: #fff; color: var(--muted); border-color: var(--border); }
+  button:disabled { opacity: .55; cursor: not-allowed; }
+  main { padding: 18px 22px 40px; max-width: 1180px; margin: 0 auto; }
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .card h2 { font-size: 14px; margin: 0 0 10px; font-weight: 620; }
+  .row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+  .row label { min-width: 72px; color: var(--muted); font-size: 12.5px; }
+  .row .grow { flex: 1; min-width: 160px; }
+  .status { font-size: 12.5px; padding: 4px 10px; border-radius: 20px; background: #f1f3f6; color: var(--muted); }
+  .status.ok { background: #e8f6ec; color: var(--ok); }
+  .status.err { background: #fdecec; color: var(--err); }
+  .out {
+    margin-top: 10px; padding: 10px 12px; background: #fafbfc; border: 1px solid var(--border);
+    border-radius: 8px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap;
+    max-height: 340px; overflow: auto;
+  }
+  .answer {
+    background: var(--accent-soft); border: 1px solid #cddffd; border-radius: 8px;
+    padding: 12px 14px; margin-top: 10px; white-space: pre-wrap;
+  }
+  .ev {
+    border-left: 3px solid var(--border); padding: 6px 10px; margin-top: 8px;
+    font-size: 12.5px; color: #374151; background: #fafbfc; border-radius: 0 6px 6px 0;
+  }
+  .ev b { color: var(--muted); font-weight: 550; }
+  .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin-top: 10px; }
+  .kpi div {
+    background: #fafbfc; border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; text-align: center;
+  }
+  .kpi span { display: block; font-size: 17px; font-weight: 650; }
+  .kpi small { color: var(--muted); font-size: 11.5px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 550; }
+  .pass { color: var(--ok); } .fail { color: var(--err); }
+  footer { color: var(--muted); font-size: 12px; text-align: center; padding: 18px; }
+  .hint { color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Phosphor AI Stack</h1>
+  <span class="sub">检索增强智能体平台 · 控制台</span>
+  <div class="grow"></div>
+  <input type="text" id="base" value="http://127.0.0.1:8080" style="width:230px" placeholder="API 地址">
+  <button class="ghost" id="btnHealth">健康检查</button>
+  <span class="status" id="healthStatus">未连接</span>
+</header>
+
+<main>
+  <div class="grid">
+    <section class="card">
+      <h2>知识摄入</h2>
+      <div class="row"><label>标题</label><div class="grow"><input type="text" id="ingTitle" value="handbook"></div></div>
+      <div class="row"><label>文档 ID</label><div class="grow"><input type="text" id="ingDocId" placeholder="留空自动生成"></div></div>
+      <textarea id="ingText" placeholder="粘贴要摄入的文本…"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button id="btnIngest">摄入</button>
+        <button class="ghost" id="btnDocs">文档列表</button>
+        <span class="hint" id="ingHint"></span>
+      </div>
+      <div class="out" id="ingOut" hidden></div>
+    </section>
+
+    <section class="card">
+      <h2>混合检索</h2>
+      <div class="row"><label>查询</label><div class="grow"><input type="text" id="sq" value="混合检索用什么融合策略？"></div></div>
+      <div class="row">
+        <label>Top-K</label>
+        <select id="sk" style="width:90px"><option>3</option><option selected>6</option><option>10</option></select>
+        <button id="btnSearch">检索</button>
+      </div>
+      <div class="out" id="searchOut" hidden></div>
+    </section>
+  </div>
+
+  <div class="grid" style="margin-top:14px">
+    <section class="card">
+      <h2>智能体问答</h2>
+      <div class="row"><label>问题</label><div class="grow"><input type="text" id="aq" value="Phosphor 的混合检索用什么融合策略？"></div></div>
+      <div class="row">
+        <label>会话 ID</label><div class="grow"><input type="text" id="sid" placeholder="可选，用于多轮记忆"></div>
+        <label style="min-width:auto"><input type="checkbox" id="orch"> 多智能体编排</label>
+      </div>
+      <div class="row"><button id="btnAsk">提问</button><span class="hint" id="askHint"></span></div>
+      <div class="answer" id="answer" hidden></div>
+      <div id="evidence"></div>
+    </section>
+
+    <section class="card">
+      <h2>工具与评估</h2>
+      <div class="row">
+        <button class="secondary" id="btnTools">列出工具</button>
+        <button class="secondary" id="btnEval">运行评估</button>
+        <button class="ghost" id="btnMetrics">运行时指标</button>
+      </div>
+      <div class="row">
+        <label>调用</label>
+        <div class="grow"><input type="text" id="toolExpr" placeholder='calculator 表达式，如 12*(3+4)'></div>
+        <button id="btnCalc">计算</button>
+      </div>
+      <div class="out" id="toolsOut" hidden></div>
+      <div class="kpi" id="evalKpi" hidden>
+        <div><span id="kHit">-</span><small>文档命中率</small></div>
+        <div><span id="kMrr">-</span><small>MRR</small></div>
+        <div><span id="kRecall">-</span><small>块级召回</small></div>
+        <div><span id="kGround">-</span><small>接地率</small></div>
+        <div><span id="kPass">-</span><small>通过率</small></div>
+      </div>
+      <div id="evalCases"></div>
+    </section>
+  </div>
+</main>
+
+<footer>作者 晨星 · Phosphor AI Stack v1.0.0 · 单文件控制台，零外部依赖</footer>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+
+  function base() { return $("base").value.replace(/\/+$/, ""); }
+
+  function show(el, text) {
+    el.hidden = false;
+    el.textContent = typeof text === "string" ? text : JSON.stringify(text, null, 2);
+  }
+
+  async function call(path, options) {
+    var resp = await fetch(base() + path, options);
+    var text = await resp.text();
+    var data = null;
+    try { data = JSON.parse(text); } catch (e) { data = text; }
+    if (!resp.ok) {
+      var detail = data && data.detail ? JSON.stringify(data.detail) : text;
+      throw new Error("HTTP " + resp.status + " " + detail);
+    }
+    return data;
+  }
+
+  function post(path, body) {
+    return call(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+  }
+
+  function setStatus(text, cls) {
+    var el = $("healthStatus");
+    el.textContent = text;
+    el.className = "status " + (cls || "");
+  }
+
+  $("btnHealth").onclick = async function () {
+    setStatus("检查中…");
+    try {
+      var data = await call("/health");
+      setStatus("在线 · " + (data.components.llm || "") + " / " + (data.components.embedder || ""), "ok");
+    } catch (err) {
+      setStatus("离线: " + err.message, "err");
+    }
+  };
+
+  $("btnIngest").onclick = async function () {
+    var text = $("ingText").value.trim();
+    if (!text) { show($("ingOut"), "请先输入文本"); return; }
+    try {
+      var data = await post("/api/v1/ingest", {
+        title: $("ingTitle").value || "inline",
+        doc_id: $("ingDocId").value || null,
+        text: text
+      });
+      var r = data.reports[0];
+      $("ingHint").textContent = "分块 " + r.chunks + " · " + r.elapsed_ms + " ms";
+      show($("ingOut"), data);
+    } catch (err) { show($("ingOut"), String(err.message)); }
+  };
+
+  $("btnDocs").onclick = async function () {
+    try { show($("ingOut"), await call("/api/v1/documents")); }
+    catch (err) { show($("ingOut"), String(err.message)); }
+  };
+
+  $("btnSearch").onclick = async function () {
+    try {
+      var data = await post("/api/v1/search", {
+        query: $("sq").value, k: parseInt($("sk").value, 10)
+      });
+      show($("searchOut"), data.hits.map(function (h, i) {
+        return (i + 1) + ". [" + h.score + "] " + h.doc_id + (h.heading ? " / " + h.heading : "") +
+               "\n   " + h.text.slice(0, 200);
+      }).join("\n"));
+    } catch (err) { show($("searchOut"), String(err.message)); }
+  };
+
+  $("btnAsk").onclick = async function () {
+    var btn = this;
+    btn.disabled = true;
+    $("askHint").textContent = "推理中…";
+    try {
+      var data = await post("/api/v1/ask", {
+        query: $("aq").value,
+        top_k: parseInt($("sk").value, 10),
+        orchestrate: $("orch").checked,
+        session_id: $("sid").value || ""
+      });
+      show($("answer"), data.answer);
+      $("askHint").textContent = data.strategy + " · " + data.elapsed_ms + " ms · trace " + data.trace_id;
+      var box = $("evidence");
+      box.innerHTML = "";
+      (data.evidence || []).forEach(function (h) {
+        var div = document.createElement("div");
+        div.className = "ev";
+        div.innerHTML = "<b>" + h.doc_id + (h.heading ? " / " + h.heading : "") + "</b> · " +
+                        h.score + "<br>" + h.text.slice(0, 220);
+        box.appendChild(div);
+      });
+    } catch (err) {
+      show($("answer"), String(err.message));
+      $("askHint").textContent = "失败";
+    } finally { btn.disabled = false; }
+  };
+
+  $("btnTools").onclick = async function () {
+    try {
+      var data = await call("/api/v1/tools");
+      show($("toolsOut"), data.tools.map(function (t) {
+        return t.name + " [" + t.category + "] " + t.description;
+      }).join("\n"));
+    } catch (err) { show($("toolsOut"), String(err.message)); }
+  };
+
+  $("btnCalc").onclick = async function () {
+    try {
+      var data = await post("/api/v1/tools/invoke", {
+        name: "calculator", arguments: { expression: $("toolExpr").value }
+      });
+      show($("toolsOut"), data.ok ? data.output : "error: " + data.error);
+    } catch (err) { show($("toolsOut"), String(err.message)); }
+  };
+
+  $("btnMetrics").onclick = async function () {
+    try { show($("toolsOut"), await call("/api/v1/metrics")); }
+    catch (err) { show($("toolsOut"), String(err.message)); }
+  };
+
+  $("btnEval").onclick = async function () {
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = "评估中…";
+    try {
+      var data = await post("/api/v1/evaluate", { k: parseInt($("sk").value, 10) });
+      $("kHit").textContent = data.doc_hit_rate.toFixed(2);
+      $("kMrr").textContent = data.doc_mrr.toFixed(2);
+      $("kRecall").textContent = data.recall_at_k.toFixed(2);
+      $("kGround").textContent = data.grounded_rate.toFixed(2);
+      $("kPass").textContent = data.pass_rate.toFixed(2);
+      $("evalKpi").hidden = false;
+      var rows = data.cases.map(function (c) {
+        return "<tr><td>" + c.query.slice(0, 34) + "</td><td>" + c.doc_hit.toFixed(2) +
+               "</td><td>" + c.grounded.toFixed(2) + "</td><td class='" +
+               (c.passed ? "pass" : "fail") + "'>" + (c.passed ? "PASS" : "FAIL") + "</td></tr>";
+      }).join("");
+      $("evalCases").innerHTML =
+        "<table style='margin-top:10px'><tr><th>用例</th><th>命中</th><th>接地</th><th>结果</th></tr>" +
+        rows + "</table>" +
+        (data.violations.length ? "<div class='hint' style='color:var(--err)'>门限违规: " +
+          data.violations.join("; ") + "</div>" : "<div class='hint'>无门限违规</div>");
+    } catch (err) {
+      show($("toolsOut"), String(err.message));
+    } finally { btn.disabled = false; btn.textContent = "运行评估"; }
+  };
+
+  $("btnHealth").click();
+})();
+</script>
+</body>
+</html>

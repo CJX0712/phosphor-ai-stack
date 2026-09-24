@@ -1,0 +1,9 @@
+# Optional heavy backends. Not required: the default configuration runs on the
+# zero dependency implementations and scripts/verify.py stays green without
+# these. Install to switch on real embeddings, ANN search and local inference.
+numpy==2.5.3
+faiss-cpu==1.15.0
+fastembed==0.8.0
+rank-bm25==0.2.2
+# llama-cpp-python may need a compiler on some platforms; skip it freely.
+llama-cpp-python==0.3.19

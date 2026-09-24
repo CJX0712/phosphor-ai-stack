@@ -1,0 +1,9 @@
+# Core runtime pins. Everything here has a wheel on win-amd64 and manylinux,
+# so a clean environment reproduces byte for byte.
+# Generated from a clean venv: install only these top level pins, then freeze.
+fastapi==0.141.1
+uvicorn==0.53.0
+pydantic==2.13.5
+httpx==0.28.1
+PyYAML==6.0.3
+pypdf==6.18.1

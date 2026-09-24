@@ -1,0 +1,698 @@
+openapi: 3.1.0
+info:
+  title: Phosphor AI Stack
+  description: End to end retrieval augmented agent platform.
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /api/v1/stats:
+    get:
+      summary: Stats
+      operationId: stats_api_v1_stats_get
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Stats Api V1 Stats Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/metrics:
+    get:
+      summary: Get Metrics
+      operationId: get_metrics_api_v1_metrics_get
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Get Metrics Api V1 Metrics Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/traces/{trace_id}:
+    get:
+      summary: Get Trace
+      operationId: get_trace_api_v1_traces__trace_id__get
+      parameters:
+      - name: trace_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Trace Id
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Get Trace Api V1 Traces  Trace Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/documents:
+    get:
+      summary: Documents
+      operationId: documents_api_v1_documents_get
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Documents Api V1 Documents Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ingest:
+    post:
+      summary: Ingest
+      operationId: ingest_api_v1_ingest_post
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IngestRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/documents/{doc_id}:
+    delete:
+      summary: Drop
+      operationId: drop_api_v1_documents__doc_id__delete
+      parameters:
+      - name: doc_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Doc Id
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Drop Api V1 Documents  Doc Id  Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/search:
+    post:
+      summary: Search
+      operationId: search_api_v1_search_post
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ask:
+    post:
+      summary: Ask
+      operationId: ask_api_v1_ask_post
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AskRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AskResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/stream:
+    post:
+      summary: Stream
+      operationId: stream_api_v1_stream_post
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AskRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Stream Api V1 Stream Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/tools:
+    get:
+      summary: List Tools
+      operationId: list_tools_api_v1_tools_get
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response List Tools Api V1 Tools Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/tools/invoke:
+    post:
+      summary: Invoke Tool
+      operationId: invoke_tool_api_v1_tools_invoke_post
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToolInvokeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Invoke Tool Api V1 Tools Invoke Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/evaluate:
+    post:
+      summary: Evaluate
+      operationId: evaluate_api_v1_evaluate_post
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/config:
+    get:
+      summary: Config View
+      operationId: config_view_api_v1_config_get
+      parameters:
+      - name: x-api-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Config View Api V1 Config Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    AskRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+        top_k:
+          type: integer
+          title: Top K
+          default: 6
+        orchestrate:
+          type: boolean
+          title: Orchestrate
+          default: false
+        session_id:
+          type: string
+          title: Session Id
+          default: ''
+      type: object
+      required:
+      - query
+      title: AskRequest
+    AskResponse:
+      properties:
+        query:
+          type: string
+          title: Query
+        answer:
+          type: string
+          title: Answer
+        citations:
+          items:
+            type: string
+          type: array
+          title: Citations
+        evidence:
+          items:
+            $ref: '#/components/schemas/SearchHit'
+          type: array
+          title: Evidence
+        tool_calls:
+          type: integer
+          title: Tool Calls
+          default: 0
+        iterations:
+          type: integer
+          title: Iterations
+          default: 0
+        converged:
+          type: boolean
+          title: Converged
+          default: true
+        elapsed_ms:
+          type: integer
+          title: Elapsed Ms
+          default: 0
+        trace_id:
+          type: string
+          title: Trace Id
+          default: ''
+        strategy:
+          type: string
+          title: Strategy
+          default: react
+      type: object
+      required:
+      - query
+      - answer
+      title: AskResponse
+    EvaluateRequest:
+      properties:
+        k:
+          type: integer
+          title: K
+          default: 6
+      type: object
+      title: EvaluateRequest
+    EvaluateResponse:
+      properties:
+        doc_hit_rate:
+          type: number
+          title: Doc Hit Rate
+        doc_mrr:
+          type: number
+          title: Doc Mrr
+        recall_at_k:
+          type: number
+          title: Recall At K
+        grounded_rate:
+          type: number
+          title: Grounded Rate
+        pass_rate:
+          type: number
+          title: Pass Rate
+        latency_ms_p50:
+          type: number
+          title: Latency Ms P50
+        retrieval_cases:
+          type: integer
+          title: Retrieval Cases
+        violations:
+          items:
+            type: string
+          type: array
+          title: Violations
+        cases:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Cases
+      type: object
+      required:
+      - doc_hit_rate
+      - doc_mrr
+      - recall_at_k
+      - grounded_rate
+      - pass_rate
+      - latency_ms_p50
+      - retrieval_cases
+      title: EvaluateResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    HealthResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+          default: ok
+        version:
+          type: string
+          title: Version
+          default: ''
+        env:
+          type: string
+          title: Env
+          default: ''
+        components:
+          additionalProperties: true
+          type: object
+          title: Components
+      type: object
+      title: HealthResponse
+    IngestRequest:
+      properties:
+        text:
+          type: string
+          title: Text
+          default: ''
+        title:
+          type: string
+          title: Title
+          default: inline
+        doc_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Doc Id
+        path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Path
+        directory:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Directory
+      type: object
+      title: IngestRequest
+    IngestResponse:
+      properties:
+        ok:
+          type: boolean
+          title: Ok
+          default: true
+        reports:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Reports
+        skipped:
+          type: integer
+          title: Skipped
+          default: 0
+      type: object
+      title: IngestResponse
+    SearchHit:
+      properties:
+        chunk_id:
+          type: string
+          title: Chunk Id
+        doc_id:
+          type: string
+          title: Doc Id
+        score:
+          type: number
+          title: Score
+        source:
+          type: string
+          title: Source
+        heading:
+          type: string
+          title: Heading
+          default: ''
+        text:
+          type: string
+          title: Text
+      type: object
+      required:
+      - chunk_id
+      - doc_id
+      - score
+      - source
+      - text
+      title: SearchHit
+    SearchRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+        k:
+          type: integer
+          title: K
+          default: 6
+      type: object
+      required:
+      - query
+      title: SearchRequest
+    SearchResponse:
+      properties:
+        query:
+          type: string
+          title: Query
+        hits:
+          items:
+            $ref: '#/components/schemas/SearchHit'
+          type: array
+          title: Hits
+        elapsed_ms:
+          type: integer
+          title: Elapsed Ms
+          default: 0
+      type: object
+      required:
+      - query
+      title: SearchResponse
+    ToolInvokeRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        arguments:
+          additionalProperties: true
+          type: object
+          title: Arguments
+      type: object
+      required:
+      - name
+      title: ToolInvokeRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

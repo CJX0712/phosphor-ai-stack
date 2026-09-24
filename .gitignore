@@ -1,0 +1,26 @@
+# Root anchored temp files only. A bare _*.py rule would also ignore every
+# __init__.py in the tree and break imports in a clean clone.
+/_*
+!/**/__init__.py
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+.env.local
+
+.artifacts/
+.cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+*.log
+.DS_Store
